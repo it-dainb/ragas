@@ -32,6 +32,8 @@ import inspect
 from pysbd import Segmenter
 from pysbd.languages import LANGUAGE_CODES
 
+from underthesea import sent_tokenize
+
 from ragas.experimental.prompt import PydanticPrompt as Prompt
 
 logger = logging.getLogger(__name__)
@@ -344,6 +346,9 @@ class Ensember:
 
         return verdict_agg
 
+class VietnameseSegmenter:
+    def segment(self, text):
+        return sent_tokenize(text)
 
 def get_segmenter(
     language: str = "english", clean: bool = False, char_span: bool = False
@@ -352,7 +357,9 @@ def get_segmenter(
     Get a sentence segmenter for a given language
     """
     language = language.lower()
-    if language not in LANGUAGE_CODES:
+    if language == "vietnamese":
+        return VietnameseSegmenter()
+    elif language not in LANGUAGE_CODES:
         raise ValueError(
             f"Language '{language}' not supported. Supported languages: {LANGUAGE_CODES.keys()}"
         )
